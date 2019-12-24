@@ -52,3 +52,7 @@ Route::get('/news', 'NewsController@index');
 Route::get('/profile', 'ProfileController@index');
 Route::get('/task', 'TaskController@index');
 Route::get('/category', 'CategoryController@index');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

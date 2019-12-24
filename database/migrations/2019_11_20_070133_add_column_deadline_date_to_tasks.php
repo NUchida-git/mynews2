@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class DropColumnTasksColumn extends Migration
+class AddColumnDeadlineDateToTasks extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class DropColumnTasksColumn extends Migration
     public function up()
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->dropColumn('category');  //カラムの削除
+            $table->date('deadline_date')->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class DropColumnTasksColumn extends Migration
     public function down()
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->string('category')->nullable();
+            $table->dropColumn('deadline_date');  //カラムの削除
         });
     }
 }

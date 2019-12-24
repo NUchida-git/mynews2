@@ -7,8 +7,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 use App\Task;
-use App\Category;
 use App\User;
+use App\Category;
+use App\Tag;
+use App\TaskTags;
 // use App\taskHistory;
 use Carbon\Carbon;
 
@@ -19,7 +21,8 @@ class TaskController extends Controller
         $priorityList = Task::PRIORITY_LIST;
         $users = User::all();
         $categories = Category::all();
-        return view('admin.task.create', ['priorityList' => $priorityList, 'users' => $users, 'categories' => $categories]);
+        $tags = Tag::all();
+        return view('admin.task.create', compact('priorityList', 'users', 'categories', 'tags'));
     }
 
     public function create(Request $request)
@@ -30,9 +33,11 @@ class TaskController extends Controller
 
         $task = new Task;
         $form = $request->all();
+        $tags = $form['task_tags'];
 
         // フォームから送信されてきた_tokenを削除する
         unset($form['_token']);
+        unset($form['task_tags']);
 
         // データベースに保存する
         $user = Auth::user();
@@ -40,6 +45,7 @@ class TaskController extends Controller
         $task->user_id = $user->id;
         $task->is_complete = 0;
         $task->save();
+        $task->tags()->sync($tags);
     
         return redirect('admin/task');
     }
@@ -51,10 +57,13 @@ class TaskController extends Controller
         if (empty($task)) {
             abort(404);    
         }
-        
+
         $priorityList = Task::PRIORITY_LIST;
         $categories = Category::all();
-        return view('admin.task.edit', ['task_form' => $task, 'priorityList' => $priorityList, 'categories' => $categories]);
+        $tags = Tag::all();
+        $taskTags =TaskTags::where('task_id',$request->id)->pluck('tag_id')->toArray();
+        // dd($taskTags);
+        return view('admin.task.edit', compact('task', 'priorityList', 'categories', 'tags', 'taskTags'));
     }
 
     public function update(Request $request)
@@ -64,11 +73,16 @@ class TaskController extends Controller
         // News Modelからデータを取得する
         $task = Task::find($request->id);
         // 送信されてきたフォームデータを格納する
-        $task_form = $request->all();
-        unset($task_form['_token']);
+        $form = $request->all();
+        $tags = $form['task_tags'];
+
+        unset($form['_token']);
+        unset($form['task_tags']);
 
         // 該当するデータを上書きして保存する
-        $task->fill($task_form)->save();
+        $task->fill($form)->save();
+        $task->tags()->sync($tags);
+
         // //編集履歴
         // $task_history = new taskHistory;
         // $task_history->task_id = $task->id;
@@ -103,6 +117,7 @@ class TaskController extends Controller
         
         $priorityList = Task::PRIORITY_LIST;
         $categories = Category::all();
+        $tags = Tag::all();
         return view('admin.task.index', compact('posts', 'cond_name', 'priorityList', 'categories', 'cond_category_id'));
     }
 

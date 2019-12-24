@@ -7,7 +7,6 @@
             <div class="col-md-8 mx-auto">
                 <h2>タスク新規作成</h2>
                 <form action="{{ action('Admin\TaskController@create') }}" method="post" enctype="multipart/form-data">
-
                     @if (count($errors) > 0)
                         <ul>
                             @foreach($errors->all() as $e)
@@ -45,6 +44,15 @@
                                     <option value="{{ $category->id }}" >{{ $category->name }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2">タグ</label>
+                        <div class="col-md-10">
+                            @foreach($tags as $tag)
+                                <input type="checkbox" id="tag{{ $loop->iteration }}" name="task_tags[]" value="{{ $tag->id }}" >
+                                <label for="tag{{ $loop->iteration }}">{{ $tag->name }}</label>
+                            @endforeach
                         </div>
                     </div>
 

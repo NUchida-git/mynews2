@@ -48,11 +48,12 @@
                         <thead>
                             <tr>
                                 <th width="10%">ID</th>
-                                <th width="10%">USER_ID</th>
+                                <!-- <th width="10%">USER_ID</th> -->
                                 <th width="30%">タスク名</th>
                                 <th width="20%">カテゴリー</th>
                                 <th width="10%">期限日</th>
                                 <th width="10%">優先度</th>
+                                <th width="10%">タグ</th>
                                 <th width="10%">完了</th>
                             </tr>
                         </thead>
@@ -66,11 +67,16 @@
                                             <tr>
                                         @endif
                                                 <th>{{ $task->id }}</th>
-                                                <td>{{ \Str::limit($task->user_id, 10) }}</td>
+                                                <!-- <td>{{ \Str::limit($task->user_id, 10) }}</td> -->
                                                 <td>{{ \Str::limit($task->name, 250) }}</td>
                                                 <td>{{ \Str::limit($task->category->name, 10) }}</td>
                                                 <td>{{ $task->deadline_date }}</td>
                                                 <td>{{ $priority_val }}</td>
+                                                <td>
+                                                    @foreach($task->tags as $tag)
+                                                        {{ $tag->name }}
+                                                    @endforeach
+                                                </td>
                                                 <td>
                                                     <form action="{{ action('Admin\TaskController@complete') }}" method="post">
                                                         <div class="form-group row">

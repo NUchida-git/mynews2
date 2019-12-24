@@ -25,4 +25,9 @@ class Task extends Model
       return $this->belongsTo('App\Category')->withDefault();
     }
 
+    public function tags()
+    {
+        return $this->belongsToMany('App\Tag', 'task_tags')->withTimestamps();
+    }
+
 }
